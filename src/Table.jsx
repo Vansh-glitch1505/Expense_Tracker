@@ -32,7 +32,7 @@ function History() {
       amount: amount
     })
       .then((res) => {
-        fetchTransactions();  // Refresh history after successful withdraw
+        fetchTransactions(); 
         setNewName("");
         setNewAmount("");
       })
@@ -68,7 +68,7 @@ function History() {
             </tr>
           ))}
 
-          {/* Row to add new withdrawal */}
+          
           <tr>
             <td>New</td>
             <td>withdrawal</td>

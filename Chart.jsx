@@ -51,7 +51,7 @@ const Chart = () => {
             runningBalance -= amount;
           }
 
-          txIndex.push(index + 1); // Transaction 1, 2, 3, ...
+          txIndex.push(index + 1); 
           balances.push(runningBalance);
         });
 

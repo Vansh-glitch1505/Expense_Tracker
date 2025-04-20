@@ -1,23 +1,28 @@
 import express from "express";
 import cors from "cors";
 import pg from "pg";
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const { Pool } = pg;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+const dbPassword = process.env.DB_PASSWORD;
+
 
 // PostgreSQL pool setup
 const pool = new Pool({
-  user: "postgres",         // replace with your DB user
+  user: "postgres",         
   host: "localhost",
-  database: "Expense_Tracker",       // replace with your DB name
-  password: "Vansh@1505", // replace with your DB password 
+  database: "Expense_Tracker",      
+  password: dbPassword, 
   port: 5432,
 });
 
-// Get current balance
+
 app.get("/api/balance", async (req, res) => {
   const result = await pool.query(
     "SELECT running_balance FROM expense_tracker ORDER BY id DESC LIMIT 1"
@@ -25,7 +30,7 @@ app.get("/api/balance", async (req, res) => {
   res.json({ running_balance: result.rows[0]?.running_balance || 0 });
 });
 
-// Deposit money
+
 app.post("/api/deposit", async (req, res) => {
     try {
       const { amount } = req.body;
@@ -39,7 +44,7 @@ app.post("/api/deposit", async (req, res) => {
         "INSERT INTO expense_tracker (type, name, amount, running_balance) VALUES ('deposit', NULL, $1, $2) RETURNING running_balance",
         [amount, newBalance]
       );
-      console.log("New balance after deposit:", newBalance); // ✅ For Debugging
+      console.log("New balance after deposit:", newBalance); 
       res.json({ running_balance: insert.rows[0].running_balance });
     } catch (err) {
       console.error("Error in POST /api/deposit:", err);
@@ -48,7 +53,7 @@ app.post("/api/deposit", async (req, res) => {
   });
   
 
-// Withdraw money
+
 app.post("/api/withdraw", async (req, res) => {
   const { name, amount } = req.body;
   const latest = await pool.query(
@@ -70,7 +75,7 @@ app.post("/api/withdraw", async (req, res) => {
   res.json(insert.rows[0]);
 });
 
-// New endpoint to fetch all deposits and withdrawals
+
 app.get("/api/transactions", async (req, res) => {
   try {
     const result = await pool.query(
